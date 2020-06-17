@@ -33,6 +33,7 @@ import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+import DataView = powerbi.DataView;
 
 import * as d3 from "d3";
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
@@ -57,6 +58,7 @@ export class Visual implements IVisual {
   }
 
   public update(options: VisualUpdateOptions) {
+    let dataView: DataView = options.dataViews[0];
     let width: number = options.viewport.width;
     let height: number = options.viewport.height;
     this.svg.attr("width", width);
@@ -72,7 +74,7 @@ export class Visual implements IVisual {
       .attr("cy", height / 2);
     let fontSizeValue: number = Math.min(width, height) / 5;
     this.textValue
-      .text("Value")
+      .text(dataView.single.value as string)
       .attr("x", "50%")
       .attr("y", "50%")
       .attr("dy", "0.35em")
@@ -80,7 +82,7 @@ export class Visual implements IVisual {
       .style("font-size", fontSizeValue + "px");
     let fontSizeLabel: number = fontSizeValue / 4;
     this.textLabel
-      .text("Label")
+      .text(dataView.metadata.columns[0].displayName)
       .attr("x", "50%")
       .attr("y", height / 2)
       .attr("dy", fontSizeValue / 1.2)
